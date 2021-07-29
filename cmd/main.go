@@ -6,10 +6,21 @@ import (
 	"math/rand"
 	"os"
 	"time"
+	_ "time/tzdata"
 )
 
 func main() {
 	rand.Seed(time.Now().Unix())
+
+	tz := os.Getenv("TZ")
+	if tz != "" {
+		loc, err := time.LoadLocation(tz)
+		if err != nil {
+			log.Println(err)
+		} else {
+			time.Local = loc
+		}					// 基于 TZ 环境变量设置时区，容器化常用
+	}
 
 	c, err := wecqupt_health_card.ParseConfig()
 	if err != nil {
